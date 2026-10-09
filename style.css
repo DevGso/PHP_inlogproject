@@ -1,0 +1,22 @@
+#inloggen_form {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    flex-direction: column;
+
+    padding-top: 15%;
+}
+
+a{
+    font-style: none;
+
+    padding-left: 10px;
+}
+
+#Registreren{
+    
+    padding-top: 30px;
+
+    display: flex;
+    justify-content: center;
+}
