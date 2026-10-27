@@ -55,6 +55,8 @@ function debug_to_console($data) {
             $of_login_geslaagd = check_login($_POST["email_invul"], $_POST["wachtwoord_invul"], $conn);
 
             if ($of_login_geslaagd){
+                session_regenerate_id();
+                $_SESSION['Gebruiker_email'] = $_POST['email_invul'];
                 debug_to_console("ingelogd");
                 header("Location: ingelogd.php");
                 exit();
@@ -80,7 +82,7 @@ function debug_to_console($data) {
 </head>
 
 <body>
-    <main>
+    <main id = "index_main">
         <div>
             <form id = "inloggen_form" action="index.php" method="post">
 

@@ -1,0 +1,6 @@
+table, th, td {
+    border-radius: 2px;
+    border-color: gray;
+    border-style: solid;
+    border-radius: 5px;
+}

@@ -16,6 +16,13 @@
         $Tekst_Error = "Probeem met de database connectie probeer het later opnieuw. Error:" . $e->getMessage();
     }
 
+    session_start();
+
+    if (!isset($_SESSION['Gebruiker_email'])) {
+        header('Location: index.php');
+        exit;
+    }
+
 function debug_to_console($data) {
     $output = $data;
     if (is_array($output))
@@ -24,7 +31,19 @@ function debug_to_console($data) {
     echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
 }
 
-    session_start(); 
+    function ophalen_gebruikers($conn) {
+
+        $gebruikers_data_query = "SELECT Gebruiker.email, Gebruiker.voornaam, Gebruiker.achternaam, Gebruiker.klas, Gebruiker.rolld, Rol.ID, Rol.naam 
+                                FROM Gebruiker 
+                                JOIN Rol on Gebruiker.rolld = Rol.ID";
+
+        $stmt = $conn->prepare($gebruikers_data_query);
+        $stmt->execute();
+
+        $data = $stmt -> fetchAll(PDO::FETCH_ASSOC);
+
+        return $data;
+    }
 
 ?>
 
@@ -34,12 +53,33 @@ function debug_to_console($data) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inlogpagina</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style_ingelogd.css">
 </head>
 
 <body>
     <main>
-ingelogd
+        <table>
+            <tr>
+                <th>E-mail</th>
+                <th>voornaam</th>
+                <th>achternaam</th>
+                <th>klas</th>
+                <th>rol</th>
+            </tr>
+            
+                <?php 
+                $gebruikers_data = ophalen_gebruikers($conn);
+                foreach ($gebruikers_data as $gebruikers) { ?>
+                <tr>
+                    <td> <?php echo htmlspecialchars($gebruikers['email']); ?> </td>
+                    <td> <?php echo htmlspecialchars($gebruikers['voornaam']); ?> </td>
+                    <td> <?php echo htmlspecialchars($gebruikers['achternaam']); ?> </td>
+                    <td> <?php echo htmlspecialchars($gebruikers['klas']); ?> </td>
+                    <td> <?php echo htmlspecialchars($gebruikers['naam']); ?> </td>
+                </tr>
+                <?php } ?>
+            
+        </table>
     </main>
 </body>
 </html>
