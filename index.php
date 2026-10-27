@@ -26,9 +26,6 @@ function debug_to_console($data) {
 
     function check_login ($email_invul, $wachtwoord_invul, $conn) {
 
-    $test = "t";
-    $teste = "test@email.nl";
-
         $login_check_query = "SELECT email, wachtwoord FROM Gebruiker where email = :email";
         $stmt = $conn->prepare($login_check_query);
         $stmt->bindParam(':email', $email_invul, \PDO::PARAM_STR);
@@ -44,8 +41,6 @@ function debug_to_console($data) {
             if (password_verify($wachtwoord_invul, $DB_data['wachtwoord'])) {
                 return true;
             }
-
-        
 }
 
     session_start(); 
@@ -62,14 +57,12 @@ function debug_to_console($data) {
             if ($of_login_geslaagd){
                 debug_to_console("ingelogd");
                 header("Location: ingelogd.php");
+                exit();
             } else {
                 $Tekst_Error = "Verkeerde gegevens - Login gefaald";
             }
-
-            //unset($_SESSION['csrf_token']);
-            
         } else {
-            die("CSRF token validation failed.");
+            die("CSRF token validation failed. Sluit en heropen de pagina om opnieuw te proberen.");
         }
 
         
