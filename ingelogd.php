@@ -1,20 +1,7 @@
 <!DOCTYPE html>
 
 <?php 
-    $dbhost = 'localhost';
-    $dbname = 'InlogProject_Giel';
-    $dbuser = 'InlogProject';
-    $dbpass = 'Gilde123!';
-
-    $if_Error = false;
-    $Tekst_Error = "";
-    
-    try {
-        $conn = new PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass);
-    } catch (PDOException $e) {
-        $if_Error = true;
-        $Tekst_Error = "Probeem met de database connectie probeer het later opnieuw. Error:" . $e->getMessage();
-    }
+include 'connectie.php';
 
     session_start();
 
@@ -23,13 +10,13 @@
         exit;
     }
 
-function debug_to_console($data) {
-    $output = $data;
-    if (is_array($output))
-        $output = implode(',', $output);
+    function debug_to_console($data) {
+        $output = $data;
+        if (is_array($output))
+            $output = implode(',', $output);
 
-    echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
-}
+        echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
+    }
 
     function ophalen_gebruikers($conn) {
 

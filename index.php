@@ -1,28 +1,15 @@
 <!DOCTYPE html>
 
 <?php 
-    $dbhost = 'localhost';
-    $dbname = 'InlogProject_Giel';
-    $dbuser = 'InlogProject';
-    $dbpass = 'Gilde123!';
+    include 'connectie.php';
 
-    $if_Error = false;
-    $Tekst_Error = "";
-    
-    try {
-        $conn = new PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass);
-    } catch (PDOException $e) {
-        $if_Error = true;
-        $Tekst_Error = "Probeem met de database connectie probeer het later opnieuw. Error:" . $e->getMessage();
+    function debug_to_console($data) {
+        $output = $data;
+        if (is_array($output))
+            $output = implode(',', $output);
+
+        echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
     }
-
-function debug_to_console($data) {
-    $output = $data;
-    if (is_array($output))
-        $output = implode(',', $output);
-
-    echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
-}
 
     function check_login ($email_invul, $wachtwoord_invul, $conn) {
 
@@ -41,7 +28,25 @@ function debug_to_console($data) {
             if (password_verify($wachtwoord_invul, $DB_data['wachtwoord'])) {
                 return true;
             }
-}
+    }
+
+    function get_ingelogde_gebruiker_data($email_invul, $conn){
+
+        $ingelogde_gebruiker_data_query = "SELECT Gebruiker.email, Gebruiker.voornaam, Gebruiker.achternaam, Gebruiker.klas, Gebruiker.rolld, Rol.ID, Rol.naam 
+                                            FROM Gebruiker 
+                                            JOIN Rol on Gebruiker.rolld = Rol.ID AND Gebruiker.email = :email";
+        $stmt = $conn->prepare($ingelogde_gebruiker_data_query);
+        $stmt->bindParam(':email', $email_invul, \PDO::PARAM_STR);
+        $stmt->execute();
+
+        $resultaat = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $gebruiker_data = $resultaat[0];
+        
+        return $gebruiker_data;
+    }
+
+
 
     session_start(); 
 
@@ -55,9 +60,13 @@ function debug_to_console($data) {
             $of_login_geslaagd = check_login($_POST["email_invul"], $_POST["wachtwoord_invul"], $conn);
 
             if ($of_login_geslaagd){
+                $ingelogde_gebruiker_data = get_ingelogde_gebruiker_data($_POST['email_invul'], $conn);
                 session_regenerate_id();
-                $_SESSION['Gebruiker_email'] = $_POST['email_invul'];
-                debug_to_console("ingelogd");
+                $_SESSION['Gebruiker_email'] = $ingelogde_gebruiker_data['email'];
+                $_SESSION['Gebruiker_voornaam'] = $ingelogde_gebruiker_data['voornaam'];
+                $_SESSION['Gebruiker_achternaam'] = $ingelogde_gebruiker_data['achternaam'];
+                $_SESSION['Gebruiker_klas'] = $ingelogde_gebruiker_data['klas'];
+                $_SESSION['Gebruiker_naam'] = $ingelogde_gebruiker_data['naam'];
                 header("Location: ingelogd.php");
                 exit();
             } else {
@@ -91,9 +100,9 @@ function debug_to_console($data) {
                 <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" >
 
                 <label for="email_invul">E-mail</label>
-                <input type="email" name="email_invul" id="email_invul">
+                <input type="email" name="email_invul" id="email_invul" maxlength = "50" size = "30">
                 <label for="wachtwoord_invul">wachtwoord</label>
-                <input type="password" name="wachtwoord_invul" id="wachtwoord_invul">
+                <input type="password" name="wachtwoord_invul" id="wachtwoord_invul" maxlength = "100" size = "30">
                 <input type="submit" name="submit" id="submit_button" <?php if  ($if_Error == true) { ?> disabled <?php } ?> >
             </form>
         </div>
