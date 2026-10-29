@@ -9,6 +9,19 @@ include 'connectie.php';
         header('Location: index.php');
         exit;
     }
+    if($_SESSION['Gebruiker_rol'] === "Admin"){ ?>
+        <style>
+            body {
+                background-color: green;
+            }
+        </style>
+    <?php } else if ($_SESSION['Gebruiker_rol'] === "Gebruiker") { ?>
+        <style>
+            body {
+                background-color: blue;
+            }
+        </style>
+    <?php }
 
     function debug_to_console($data) {
         $output = $data;
