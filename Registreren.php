@@ -1,8 +1,51 @@
 <!DOCTYPE html>
 <?php 
-    include 'connectie.php'
+    include 'connectie.php';
 
     session_start(); 
+
+    // if (isset($_SESSION['Gebruiker_email'])) {
+    //     header('Location: index.php');
+    //     exit;
+    // }
+
+    function overeenkomende_wachtwoorden_check($wachtwoord_invul_1, $wachtwoord_invul_2){
+        if ($wachtwoord_invul_1 === $wachtwoord_invul_2) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    function get_gebruiker_rolid($conn) {
+        $query_get_gebruiker_rolid = "SELECT ID FROM Rol WHERE naam = 'Gebruiker' ";
+        $stmt = $conn->prepare($query_get_gebruiker_rolid);
+        $stmt->execute();
+
+        $resultaat = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        return $resultaat;
+    }
+
+    function bestaat_gebruiker($registreerende_email, $conn) {
+
+        $ingelogde_gebruiker_data_query = "SELECT COUNT(email) FROM Gebruiker WHERE email = :registreren_email ";
+        $stmt = $conn->prepare($ingelogde_gebruiker_data_query);
+        $stmt->bindParam(':registreren_email', $registreerende_email, \PDO::PARAM_STR);
+        $stmt->execute();
+
+        $resultaat = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if ($resultaat >= 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function wachtwoord_hashen($invul_wachtwoord, $conn) {
+    return password_hash($invul_wachtwoord, PASSWORD_DEFAULT);
+    }
 
     if (empty($_SESSION['csrf_token'])) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -11,11 +54,56 @@
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (isset($_POST['csrf_token']) && $_POST['csrf_token'] === $_SESSION['csrf_token']) {
-            
+
+            if (overeenkomende_wachtwoorden_check($_POST['wachtwoord_invul_registreren'], $_POST['wachtwoord_invul_registreren_controle'])) {
+
+                if (!(bestaat_gebruiker($_POST['email_invul_registreren'], $conn))){
+
+                    $query_insert_gebruiker = "INSERT INTO Gebruiker (email, wachtwoord, voornaam, achternaam, klas, rolld) VALUES (:email,:wachtwoord,:voornaam,:achternaam,:klas,:rolid)";
+
+                    $hash_wachtwoord = wachtwoord_hashen($_POST['wachtwoord_invul_registreren'], $conn);
+                    
+                    $gebruiker_rolid = intval(get_gebruiker_rolid($conn));
+
+                    $stmt = $conn->prepare($query_insert_gebruiker);
+
+                    $stmt->bindParam(':email', $_POST['email_invul_registreren'], \PDO::PARAM_STR);
+                    $stmt->bindParam(':wachtwoord', $hash_wachtwoord, \PDO::PARAM_STR);
+                    $stmt->bindParam(':voornaam', $_POST['voornaam_invul_registreren'], \PDO::PARAM_STR);
+                    $stmt->bindParam(':achternaam', $_POST['achternaam_invul_registreren'], \PDO::PARAM_STR);
+                    $stmt->bindParam(':klas', $_POST['klas_invul_registreren'], \PDO::PARAM_STR);
+                    $stmt->bindParam(':rolid', $gebruiker_rolid, \PDO::PARAM_INT);
+                    $stmt->execute();
+                } else {
+                    $Tekst_Error = "Er bestaat al een gebruiker met deze email - gebruik een ander email"; ?>
+                    <style>
+                    #email_invul_registreren{
+                        border-radius: 2px;
+                        border-color: red;
+                        border-style: solid;
+                        border-radius: 3px;
+                    }
+                </style>
+                <?php }
+            } else {
+                $Text_Error = "De gegeven wachtwoorden komen niet overeen"; ?>
+                <style>
+                    .wachtwoord_invul{
+                        border-radius: 2px;
+                        border-color: red;
+                        border-style: solid;
+                        border-radius: 3px;
+                    }
+                </style>
+            <?php }
+
         } else {
             die("CSRF token validation failed. Sluit en heropen de pagina om opnieuw te proberen.");
         }
+        
     }
+
+    
 ?>
 
 <html lang="nl">
@@ -50,10 +138,10 @@
 
 
                 <label for="wachtwoord_invul_registreren">Wachtwoord</label>
-                <input type="password" name="wachtwoord_invul_registreren" id="wachtwoord_invul" maxlength = "100" size = "30">
+                <input type="password" name="wachtwoord_invul_registreren" class="wachtwoord_invul" maxlength="100" size="30">
 
                 <label for="wachtwoord_invul_registreren">Wachtwoord herhalen</label>
-                <input type="password" name="wachtwoord_invul_registreren" id="wachtwoord_invul" maxlength = "100" size = "30">
+                <input type="password" name="wachtwoord_invul_registreren_controle" class="wachtwoord_invul "maxlength="100" size="30">
                 <input type="submit" name="submit" id="submit_button" <?php if  ($if_Error == true) { ?> disabled <?php } ?> >
             </form>
         </div>

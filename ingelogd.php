@@ -80,6 +80,7 @@ include 'connectie.php';
                 <?php } ?>
             
         </table>
+        <span id = "Db_error_tonen"><?php echo $Tekst_Error; ?></span>
     </main>
 </body>
 </html>

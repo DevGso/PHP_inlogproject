@@ -4,3 +4,16 @@ table, th, td {
     border-style: solid;
     border-radius: 5px;
 }
+
+#Db_error_tonen{
+    padding-top: 10px;
+
+    color: white;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
