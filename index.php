@@ -66,7 +66,7 @@
                 $_SESSION['Gebruiker_voornaam'] = $ingelogde_gebruiker_data['voornaam'];
                 $_SESSION['Gebruiker_achternaam'] = $ingelogde_gebruiker_data['achternaam'];
                 $_SESSION['Gebruiker_klas'] = $ingelogde_gebruiker_data['klas'];
-                $_SESSION['Gebruiker_naam'] = $ingelogde_gebruiker_data['naam'];
+                $_SESSION['Gebruiker_rol'] = $ingelogde_gebruiker_data['naam'];
                 header("Location: ingelogd.php");
                 exit();
             } else {
