@@ -1,0 +1,30 @@
+#registreren_form {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    flex-direction: column;
+}
+
+a{
+    font-style: none;
+
+    padding-left: 10px;
+}
+
+#inloggen{
+    padding-top: 30px;
+
+    display: flex;
+    justify-content: center;
+}
+
+#registreren_main {
+    padding-top: 15%;
+}
+
+#Db_error_tonen{
+    padding-top: 5px;
+
+    display: flex;
+    justify-content: center;
+}
