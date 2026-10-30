@@ -39,10 +39,8 @@
         $resultaat_int = $resultaat[0];
 
         if ($resultaat_int["COUNT(email)"] == 0) {
-            echo "gebruiker bestaat niet";
             return false;
         } else {
-            echo "gebruiker bestaat";
             return true;
         }
     }
@@ -98,7 +96,7 @@
                 </style>
                 <?php }
             } else {
-                $Text_Error = "De gegeven wachtwoorden komen niet overeen"; ?>
+                $Tekst_Error = "De gegeven wachtwoorden komen niet overeen"; ?>
                 <style>
                     .wachtwoord_invul{
                         border-radius: 2px;
