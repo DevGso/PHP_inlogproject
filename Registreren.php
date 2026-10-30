@@ -4,10 +4,10 @@
 
     session_start(); 
 
-    // if (isset($_SESSION['Gebruiker_email'])) {
-    //     header('Location: index.php');
-    //     exit;
-    // }
+    if (isset($_SESSION['Gebruiker_email'])) {
+        header('Location: index.php');
+        exit;
+    }
 
     function overeenkomende_wachtwoorden_check($wachtwoord_invul_1, $wachtwoord_invul_2){
         if ($wachtwoord_invul_1 === $wachtwoord_invul_2) {
@@ -36,14 +36,18 @@
 
         $resultaat = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        if ($resultaat >= 1) {
-            return true;
-        } else {
+        $resultaat_int = $resultaat[0];
+
+        if ($resultaat_int["COUNT(email)"] == 0) {
+            echo "gebruiker bestaat niet";
             return false;
+        } else {
+            echo "gebruiker bestaat";
+            return true;
         }
     }
 
-    function wachtwoord_hashen($invul_wachtwoord, $conn) {
+    function wachtwoord_hashen($invul_wachtwoord) {
     return password_hash($invul_wachtwoord, PASSWORD_DEFAULT);
     }
 
@@ -57,11 +61,11 @@
 
             if (overeenkomende_wachtwoorden_check($_POST['wachtwoord_invul_registreren'], $_POST['wachtwoord_invul_registreren_controle'])) {
 
-                if (!(bestaat_gebruiker($_POST['email_invul_registreren'], $conn))){
+                if ((bestaat_gebruiker($_POST['email_invul_registreren'], $conn)) == false){
 
                     $query_insert_gebruiker = "INSERT INTO Gebruiker (email, wachtwoord, voornaam, achternaam, klas, rolld) VALUES (:email,:wachtwoord,:voornaam,:achternaam,:klas,:rolid)";
 
-                    $hash_wachtwoord = wachtwoord_hashen($_POST['wachtwoord_invul_registreren'], $conn);
+                    $hash_wachtwoord = wachtwoord_hashen($_POST['wachtwoord_invul_registreren']);
                     
                     $gebruiker_rolid = intval(get_gebruiker_rolid($conn));
 
@@ -74,6 +78,14 @@
                     $stmt->bindParam(':klas', $_POST['klas_invul_registreren'], \PDO::PARAM_STR);
                     $stmt->bindParam(':rolid', $gebruiker_rolid, \PDO::PARAM_INT);
                     $stmt->execute();
+
+                    ?>
+                    <script>
+                        alert("Het inloggen is gelukt. Druk op ok om verder te gaan."); 
+                        window.location.href = "index.php";
+                    </script>
+                    <?php
+
                 } else {
                     $Tekst_Error = "Er bestaat al een gebruiker met deze email - gebruik een ander email"; ?>
                     <style>
@@ -125,23 +137,23 @@
                 <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" >
 
                 <label for="email_invul_registreren">E-mail</label>
-                <input type="email" name="email_invul_registreren" id="email_invul_registreren" maxlength = "50" size = "30">
+                <input type="email" name="email_invul_registreren" id="email_invul_registreren" maxlength = "50" size = "30" required>
 
                 <label for="Voornaam">Voornaam</label>
-                <input type="text" name = "voornaam_invul_registreren" maxlength = "20" size = "20">
+                <input type="text" name = "voornaam_invul_registreren" maxlength = "20" size = "20" required>
 
                 <label for="achternaam">Achternaam</label>
-                <input type="text" name = "achternaam_invul_registreren" maxlength = "20" size = "20">
+                <input type="text" name = "achternaam_invul_registreren" maxlength = "20" size = "20" required>
 
                 <label for="klas">Klas</label>
-                <input type="text" name="klas_invul_registreren" maxlength = "15" size = "15">
+                <input type="text" name="klas_invul_registreren" maxlength = "15" size = "15" required>
 
 
                 <label for="wachtwoord_invul_registreren">Wachtwoord</label>
-                <input type="password" name="wachtwoord_invul_registreren" class="wachtwoord_invul" maxlength="100" size="30">
+                <input type="password" name="wachtwoord_invul_registreren" class="wachtwoord_invul" maxlength="100" size="30" required>
 
                 <label for="wachtwoord_invul_registreren">Wachtwoord herhalen</label>
-                <input type="password" name="wachtwoord_invul_registreren_controle" class="wachtwoord_invul "maxlength="100" size="30">
+                <input type="password" name="wachtwoord_invul_registreren_controle" class="wachtwoord_invul "maxlength="100" size="30" requird>
                 <input type="submit" name="submit" id="submit_button" <?php if  ($if_Error == true) { ?> disabled <?php } ?> >
             </form>
         </div>
