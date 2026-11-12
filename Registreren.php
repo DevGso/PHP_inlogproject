@@ -61,7 +61,7 @@
 
                 if ((bestaat_gebruiker($_POST['email_invul_registreren'], $conn)) == false){
 
-                    $query_insert_gebruiker = "INSERT INTO Gebruiker (email, wachtwoord, voornaam, achternaam, klas, rolld) VALUES (:email,:wachtwoord,:voornaam,:achternaam,:klas,:rolid)";
+                    $query_insert_gebruiker = "INSERT INTO Gebruiker (email, wachtwoord, voornaam, achternaam, klas, rolid) VALUES (:email,:wachtwoord,:voornaam,:achternaam,:klas,:rolid)";
 
                     $hash_wachtwoord = wachtwoord_hashen($_POST['wachtwoord_invul_registreren']);
                     

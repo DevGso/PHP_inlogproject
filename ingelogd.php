@@ -33,9 +33,9 @@ include 'connectie.php';
 
     function ophalen_gebruikers($conn) {
 
-        $gebruikers_data_query = "SELECT Gebruiker.email, Gebruiker.voornaam, Gebruiker.achternaam, Gebruiker.klas, Gebruiker.rolld, Rol.ID, Rol.naam 
+        $gebruikers_data_query = "SELECT Gebruiker.email, Gebruiker.voornaam, Gebruiker.achternaam, Gebruiker.klas, Gebruiker.rolid, Rol.ID, Rol.naam 
                                 FROM Gebruiker 
-                                JOIN Rol on Gebruiker.rolld = Rol.ID";
+                                JOIN Rol on Gebruiker.rolid = Rol.ID";
 
         $stmt = $conn->prepare($gebruikers_data_query);
         $stmt->execute();

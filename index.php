@@ -32,9 +32,9 @@
 
     function get_ingelogde_gebruiker_data($email_invul, $conn){
 
-        $ingelogde_gebruiker_data_query = "SELECT Gebruiker.email, Gebruiker.voornaam, Gebruiker.achternaam, Gebruiker.klas, Gebruiker.rolld, Rol.ID, Rol.naam 
+        $ingelogde_gebruiker_data_query = "SELECT Gebruiker.email, Gebruiker.voornaam, Gebruiker.achternaam, Gebruiker.klas, Gebruiker.rolid, Rol.ID, Rol.naam 
                                             FROM Gebruiker 
-                                            JOIN Rol on Gebruiker.rolld = Rol.ID AND Gebruiker.email = :email";
+                                            JOIN Rol on Gebruiker.rolid = Rol.ID AND Gebruiker.email = :email";
         $stmt = $conn->prepare($ingelogde_gebruiker_data_query);
         $stmt->bindParam(':email', $email_invul, \PDO::PARAM_STR);
         $stmt->execute();
