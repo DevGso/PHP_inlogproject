@@ -27,6 +27,8 @@
             } 
             if (password_verify($wachtwoord_invul, $DB_data['wachtwoord'])) {
                 return true;
+            } else {
+                return false;
             }
     }
 
